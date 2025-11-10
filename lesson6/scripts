@@ -1,0 +1,11 @@
+create table if not exists users (
+	id bigserial primary key,
+	first_name text not null,
+	last_name text,
+	date_of_birth date ,
+	is_active boolean default false
+);
+insert into users (first_name,is_active) values
+('Seva',true),('Liza',true),('Nikita',false);
+
+select * from users where is_active = true order by id asc;
