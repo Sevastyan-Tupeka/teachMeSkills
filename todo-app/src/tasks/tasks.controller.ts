@@ -12,12 +12,16 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
+import { TaskOwnerOrAdminGuards } from 'src/common/guards/task-owmer-or-admin.guard';
+import { TaskOwnerJwtGuard } from 'src/common/guards/task-owner-jwt.guard';
 
 @Controller('tasks')
 export class TasksController {
@@ -42,6 +46,7 @@ export class TasksController {
   }
 
   @Post()
+  @UseGuards(TaskOwnerJwtGuard)
   @HttpCode(201)
   create(
     @Body() dto: CreateTaskDto,
@@ -61,6 +66,7 @@ export class TasksController {
   }
 
   @Patch(':id')
+  @UseGuards(TaskOwnerOrAdminGuards)
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateTaskDto,
@@ -70,6 +76,7 @@ export class TasksController {
   }
 
   @Delete(':id')
+  @UseGuards(ApiKeyGuard)
   @HttpCode(204)
   remove(
     @Param('id', new ParseUUIDPipe()) id: string,

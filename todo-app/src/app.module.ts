@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbConfig from './config/db.config';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { UserContextMiddleware } from './common/middlewares/user-context-middleware';
 
 @Module({
   imports: [
@@ -36,5 +38,8 @@ import dbConfig from './config/db.config';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(UserContextMiddleware).forRoutes('tasks');
+  }
 }
